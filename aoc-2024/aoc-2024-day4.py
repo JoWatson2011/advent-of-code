@@ -1,6 +1,5 @@
 from pandas import read_table
 
-
 def solve(path):
     grid = read_table(
         path,
@@ -11,10 +10,10 @@ def solve(path):
         (0, 1),  # up
         (1, 0),  # left
         (0, -1),  # down
-                  (-1, 1),  # diag up right
-                  (-1, -1),  # diag down right
-                  (1, 1),  # diag up left
-                  (1, -1)  # diag down left
+        (-1, 1),  # diag up right
+        (-1, -1),  # diag down right
+        (1, 1),  # diag up left
+        (1, -1)  # diag down left
     ]
     res = []
     for direction_x, direction_y in directions:
@@ -25,7 +24,6 @@ def solve(path):
                  for y in range(len(grid))]))
 
     return sum(res)
-
 
 def search_grid(grid, x, y, direction_x, direction_y, word_index=0,):
 
@@ -43,7 +41,3 @@ def search_grid(grid, x, y, direction_x, direction_y, word_index=0,):
         if search_grid(grid, new_x, new_y, direction_x, direction_y, word_index + 1):
             return True
     return False
-
-
-res = solve("day-4-input.txt")
-print(res)
