@@ -7,7 +7,6 @@ const solve = async (path) => {
   const [rules_raw, pages_raw] = data
     .split("\n\n")
     .map((section) => section.split("\n"));
-  const rules = rules_raw.map((rules) => rules.split("|"));
   const manualPages = pages_raw.map((pages) => pages.split(","));
 
   const validManuals = [];
