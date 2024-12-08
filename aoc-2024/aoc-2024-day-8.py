@@ -1,6 +1,5 @@
 from pandas import read_table
-from itertools import combinations
-
+from itertools import combinations, chain
 
 def solve(path):
     grid = read_table(
@@ -36,7 +35,9 @@ def get_antenna_locations(grid):
 
 def get_antinode_locations(antenna_locations, boundary):
     antenna_frequencies = list(antenna_locations.keys())
-    antinode_locations = []
+
+    antinode_locations = ['{0},{1}'.format(x, y) for x, y in list(
+        chain.from_iterable(antenna_locations.values()))]
     for frequency in antenna_frequencies:
         for point1, point2 in list(combinations(antenna_locations[frequency], 2)):
             x1, y1 = point1
@@ -44,21 +45,40 @@ def get_antinode_locations(antenna_locations, boundary):
 
             xd, yd = x2 - x1, y2 - y1
 
-            x0, y0 = x1 - xd, y1 - yd
-            x3, y3 = x2 + xd, y2 + yd
-
-            newCoords = []
-
-            if (boundary > x0 >= 0 and boundary > y0 >= 0):
-                newCoords.append('{0},{1}'.format(x0, y0))
-
-            if (boundary > x3 >= 0 and boundary > y3 >= 0):
-                newCoords.append('{0},{1}'.format(x3, y3))
+            forward_points = get_forward_points(x2, y2, xd, yd, [], boundary)
+            backwards_points = get_backwards_points(
+                x1, y1, xd, yd, [], boundary)
 
             [antinode_locations.append(
-                coord) for coord in newCoords if coord not in antinode_locations]
+                coord) for coord in forward_points + backwards_points if coord not in antinode_locations]
+
+            [antinode_locations.append(
+                coord) for coord in forward_points + backwards_points if coord not in antinode_locations]
 
     return antinode_locations
 
 
-print(solve("day-8-input.txt"))
+def get_forward_points(x2, y2, xd, yd, forward_points, boundary):
+    x3, y3 = x2 + xd, y2 + yd
+
+    if (boundary > x3 >= 0 and boundary > y3 >= 0):
+        coord = '{0},{1}'.format(x3, y3)
+
+        if coord not in forward_points:
+            forward_points.append(coord)
+        return get_forward_points(x3, y3, xd, yd, forward_points, boundary)
+    else:
+        return forward_points
+
+
+def get_backwards_points(x1, y1, xd, yd, backwards_points, boundary):
+    x0, y0 = x1 - xd, y1 - yd
+
+    if (boundary > x0 >= 0 and boundary > y0 >= 0):
+        coord = '{0},{1}'.format(x0, y0)
+
+        if coord not in backwards_points:
+            backwards_points.append(coord)
+        return get_backwards_points(x0, y0, xd, yd, backwards_points, boundary)
+    else:
+        return backwards_points
