@@ -23,37 +23,34 @@ def solve(path):
                 [sum([search_grid(grid, x, y, direction_x, direction_y)
                       for x in range(len(grid[y]))])
                  for y in range(len(grid))]))
+        
+    
 
-    res_x_mas = []
-    # just the diagonal directions
+    indexes_mas = []
     for direction_x, direction_y in directions[4:]:
-        res_x_mas.append(
-            [
-                [
-                    search_grid(grid, x, y, direction_x,
-                                direction_y, 0, ["M", "A", "S"])
-                    for x in range(len(grid[y]))
-                ]
-                for y in range(len(grid))
-            ])
-    res = [
-        [any(r[y][x] for r in res_x_mas)
-         for y in range(len(res_x_mas[0][0]))]
-        for x in range(len(res_x_mas[0]))
-    ]
+        for y in range(len(grid)):
+            for x in range(len(grid[y])):
+              if search_grid(grid, x, y, direction_x,
+                                direction_y, 0, ["M", "A", "S"]):
+                  indexes_mas.append([x,y])
 
-    count_x = 0
+    count = 0
+    for x, y in indexes_mas:
+        cross_point_directions = [
+            (2,0),
+            (0,-2),
+            (-2,2)
+        ]
+        for cpx, cpy in cross_point_directions:
+            # print(cpx, cpy)
+            [print("X:", x, x+cpx, xx, "Y:", y,y+cpy, yy) for xx, yy in indexes_mas]
+            # print(x, y, cpx, cpy)
+            if any([xx == x + cpx and yy == y + cpy for xx, yy in indexes_mas]):
+                count + 1
+        
+    # print(count)
 
-    for y in range(len(res)):
-        for x in range(len(res[y])):
-            check_for_a = y + 1 < len(res) and x + \
-                1 < len(res[0]) and grid[y+1][x+1] == "A"
-
-            if res[y][x] == True and check_for_a:
-                print(x, y)
-                count_x += 1
-
-    return {"XMAS": sum(res_xmas), "X-MAS": count_x}
+    return {"XMAS": sum(res_xmas), "X-MAS": count}
 
 
 def search_grid(grid, x, y, direction_x, direction_y, word_index=0, word=["X", "M", "A", "S"]):
