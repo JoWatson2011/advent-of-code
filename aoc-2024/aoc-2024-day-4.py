@@ -1,4 +1,6 @@
 from pandas import read_table
+from collections import Counter
+
 
 def solve(path):
     grid = read_table(
@@ -24,33 +26,10 @@ def solve(path):
                       for x in range(len(grid[y]))])
                  for y in range(len(grid))]))
 
-    res_x_mas = []
-    # just the diagonal directions
-    for direction_x, direction_y in directions[4:]:
-        res_x_mas.append(
-            [
-                [
-                    search_grid(grid, x, y, direction_x,
-                                direction_y, 0, ["M", "A", "S"])
-                    for x in range(len(grid[y]))
-                ]
-                for y in range(len(grid))
-            ])
-    res = [
-        [any(r[y][x] for r in res_x_mas)
-         for y in range(len(res_x_mas[0][0]))]
-        for x in range(len(res_x_mas[0]))
-    ]
-
     count_x = 0
-
-    for y in range(len(res)):
-        for x in range(len(res[y])):
-            check_for_a = y + 1 < len(res) and x + \
-                1 < len(res[0]) and grid[y+1][x+1] == "A"
-
-            if res[y][x] == True and check_for_a:
-                print(x, y)
+    for y in range(len(grid)):
+        for x in range(len(grid[y])):
+            if search_x_grid(grid, x, y):
                 count_x += 1
 
     return {"XMAS": sum(res_xmas), "X-MAS": count_x}
@@ -72,4 +51,22 @@ def search_grid(grid, x, y, direction_x, direction_y, word_index=0, word=["X", "
     return False
 
 
-print(solve("day-4-input-test.txt"))
+def search_x_grid(grid, x, y, centre="A", points=["M", "S"]):
+    directions = [[-1, 1],  # diag up right
+                  [-1, -1],  # diag down right
+                  [1, 1],  # diag up left
+                  [1, -1]  # diag down left
+                  ]
+    x_mas = []
+    if grid[y][x] == centre:
+        for xx, yy in directions:
+            if (0 <= x+xx < len(grid[0]) and 0 <= y+yy < len(grid)):
+                x_mas.append(grid[y+yy][x+xx])
+
+    count_x_mas = Counter(x_mas)
+    if (count_x_mas["M"] == 2 and count_x_mas["S"] == 2):
+        return True
+    return False
+
+
+print(solve("day-4-input.txt"))
