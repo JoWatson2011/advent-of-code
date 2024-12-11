@@ -34,46 +34,48 @@ Consider the arrangement of stones in front of you. How many stones will you hav
 */
 
 import { promises } from "fs";
+import { get } from "http";
 const { readFile } = promises;
 
 const solve = async (path) => {
   const data = await readFile(path, "utf-8");
   const stones = data.split(" ");
+  console.log(stones);
 
-  const part1 = getStoneArrangement(stones, 6);
+  const part1 = getStoneArrangement(stones, 25);
   return part1;
 };
 
 const getStoneArrangement = (stones, numberOfBlinks) => {
-  let blinks = 1;
+  if (!numberOfBlinks) return stones.length;
 
-  const stoneArrangments = [[...stones]];
-
-  while (blinks <= numberOfBlinks) {
-    const newStones = [];
-    stoneArrangments[blinks - 1].forEach((stone) => {
-      console.log(stone);
-      if (stone === 0) {
-        newStones.push(1);
+  const newStones = stones
+    .map((stone) => {
+      if (stone === "0") {
+        return "1";
       }
-      if (stone % 2 === 0) {
-        const str = String(stone);
-        const left = str.slice(0, Math.floor(str.length / 2));
-        const right = str.slice(Math.floor(str.length / 2), str.length - 1);
-        console.log(left, right);
-        newStones.push(Number(left), Number(right));
-      }
-      if (stone % 2 === 1) {
-        newStones.push(stone * 2024);
-      }
-    });
-    stoneArrangments[blinks] = [...newStones];
-    blinks++;
-  }
+      if (stone.length % 2 === 0) {
+        const left = stone.slice(0, Math.floor(stone.length / 2));
+        const right = stone.slice(Math.floor(stone.length / 2), stone.length);
 
+        return [left, right].map((stone) => {
+          if (/^0+$/.test(stone)) return "0";
+          if (stone.startsWith("0")) return stone.slice(1);
 
-  return stoneArrangments[numberOfBlinks - 1];
+          return stone;
+        });
+      }
+      if (stone.length % 2 === 1) {
+        return String(Number(stone) * 2024);
+      }
+    })
+    .flat();
+
+  console.log(newStones);
+
+  return getStoneArrangement(newStones, numberOfBlinks - 1);
 };
 
-const res = await solve("day-11-input-test.txt");
+const res = await solve("day-11-input.txt");
+
 console.log(res);
