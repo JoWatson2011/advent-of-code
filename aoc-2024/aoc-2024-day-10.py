@@ -15,16 +15,41 @@ def solve(path):
     for y in range(len(grid)):
         for x in range(len(grid[y])):
             if grid[y][x] == 0:
-                count += find_route(grid, x, y)
-    return count
+                visited = set()
+                # count += find_routes(grid, x, y)
+                id = '{0},{1}'.format(x, y)
+                if id in visited:
+                    return 0
+                visited.add(id)
+                
+                current_value = grid[y][x]
+
+                if current_value == 9:
+                    return 1
+
+                directions = [
+                    [x - 1, y],  # left
+                    [x, y + 1],  # down
+                    [x + 1, y],  # right
+                    [x, y-1],  # up
+                ]
+
+                for xx, yy in directions:
+                    if check_boundaries(grid, xx, yy): 
+                        if(grid[yy][xx] == current_value + 1):
+                            count += find_routes(grid, xx, yy, visited)
+            return count
 
 
-def find_route(grid, x, y, nums=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], currIndex=0):
+def find_routes(grid, x, y, visited = set()):
+    id = '{0},{1}'.format(x, y)
+    if id in visited:
+        return 0
+    visited.add(id)
+    
     current_value = grid[y][x]
 
-    if (current_value != nums[currIndex]):
-        return 0
-    if currIndex == len(nums) - 1:
+    if current_value == 9:
         return 1
 
     directions = [
@@ -33,13 +58,18 @@ def find_route(grid, x, y, nums=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], currIndex=0):
         [x + 1, y],  # right
         [x, y-1],  # up
     ]
-    valid_directions = [[xx, yy]
-                        for xx, yy in directions if checkBoundaries(grid, xx, yy)]
+    
+    peaks = 0
 
-    return sum(find_route(grid, xx, yy, nums, currIndex + 1) for xx, yy in valid_directions)
+    for xx, yy in directions:
+        if check_boundaries(grid, xx, yy): 
+            if(grid[yy][xx] == current_value + 1):
+                peaks += find_routes(grid, xx, yy, visited)
+
+    return peaks
 
 
-def checkBoundaries(grid, x, y):
+def check_boundaries(grid, x, y):
     return 0 <= x < len(grid[0]) and 0 <= y < len(grid)
 
 
