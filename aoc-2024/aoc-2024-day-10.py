@@ -21,7 +21,6 @@ def find_routes(grid, x, y):
 
     if current_value == 9:
         return 1
-
     directions = [
         [x - 1, y],  # left
         [x, y + 1],  # down
@@ -37,7 +36,6 @@ def find_routes(grid, x, y):
                 peaks += find_routes(grid, xx, yy, )
 
     return peaks
-
 
 def check_boundaries(grid, x, y):
     return 0 <= x < len(grid[0]) and 0 <= y < len(grid)
