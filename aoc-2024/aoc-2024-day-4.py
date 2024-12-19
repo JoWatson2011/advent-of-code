@@ -1,7 +1,6 @@
 from pandas import read_table
 from collections import Counter
 
-
 def solve(path):
     grid = read_table(
         path,
@@ -52,10 +51,10 @@ def search_grid(grid, x, y, direction_x, direction_y, word_index=0, word=["X", "
 
 
 def search_x_grid(grid, x, y, centre="A", points=["M", "S"]):
-    directions = [[-1, 1],  # diag up right
-                  [-1, -1],  # diag down right
-                  [1, 1],  # diag up left
-                  [1, -1]  # diag down left
+    directions = [[-1, 1],  # diag up left
+                  [-1, -1],  # diag down left
+                  [1, 1],  # diag up right
+                  [1, -1]  # diag down right
                   ]
     x_mas = []
     if grid[y][x] == centre:
@@ -64,9 +63,9 @@ def search_x_grid(grid, x, y, centre="A", points=["M", "S"]):
                 x_mas.append(grid[y+yy][x+xx])
 
     count_x_mas = Counter(x_mas)
-    if (count_x_mas["M"] == 2 and count_x_mas["S"] == 2):
+    if (count_x_mas["M"] == 2 and 
+        count_x_mas["S"] == 2 and 
+        (x_mas[0] == x_mas[1] or
+          x_mas[0] == x_mas[2])):
         return True
     return False
-
-
-print(solve("day-4-input.txt"))
