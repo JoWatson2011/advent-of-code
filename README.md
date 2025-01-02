@@ -1,6 +1,6 @@
-🎄 Advent of Code 🎄
+# 🎄 Advent of Code 🎄
 
-# 2024
+## 2024
 This was my first year participating in Advent of Code!  I alternated between using Python and Javascript for my solutions
 
 **1** :star::star:
